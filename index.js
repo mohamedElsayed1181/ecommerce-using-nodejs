@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const morgan=require("morgan");
+const morgan = require("morgan");
 const app = express();
 app.use(morgan("dev"));
 const Article = require("./models/Article");
@@ -12,16 +12,17 @@ const verifyJwt = require("./middleware/verifyJwt");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const PORT = process.env.PORT || 3000;
-app.use(cors({
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  }),
+);
 
 app.use(cookieParser());
 app.use(express.json());
 app.use("/auth", require("./routes/Auth.routes"));
-
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -94,8 +95,8 @@ app.delete("/article/:id", async (req, res) => {
   res.json(newArticle);
 });
 //get
-//verifyJwt
-app.get("/article", async (req, res)=> {
+
+app.get("/article", verifyJwt, async (req, res) => {
   try {
     // 1- جلب الـ query params
     const { search, page = 1, limit = 10 } = req.query;
@@ -116,7 +117,7 @@ app.get("/article", async (req, res)=> {
 
     // 4- جلب البيانات
     const articles = await Article.find(query)
-    .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
@@ -145,7 +146,6 @@ app.use((req, res) => {
     res.type("txt").send("404 Not Found");
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
