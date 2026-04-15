@@ -95,8 +95,8 @@ app.delete("/article/:id", async (req, res) => {
   res.json(newArticle);
 });
 //get
-//verifyJwt
-app.get("/article", async (req, res) => {
+
+app.get("/article", verifyJwt, async (req, res) => {
   try {
     // 1- جلب الـ query params
     const { search, page = 1, limit = 10 } = req.query;
